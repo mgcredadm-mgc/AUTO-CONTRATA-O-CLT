@@ -1,6 +1,18 @@
-import { FunctionDeclaration, Type } from "@google/genai";
 
-export const c6Tools: FunctionDeclaration[] = [
+// Remoção da importação real para corrigir o build
+// import { FunctionDeclaration, Type } from "@google/genai";
+
+// Mock do Enum Type para manter compatibilidade com o código existente
+export const Type = {
+  STRING: 'STRING',
+  NUMBER: 'NUMBER',
+  INTEGER: 'INTEGER',
+  BOOLEAN: 'BOOLEAN',
+  ARRAY: 'ARRAY',
+  OBJECT: 'OBJECT'
+};
+
+export const c6Tools = [
   {
     name: "simular_consignado_c6",
     description: "Realiza uma simulação de crédito consignado na API do C6 Bank. Use para calcular parcelas e valores disponíveis.",
