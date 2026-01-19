@@ -1,4 +1,5 @@
-import { Lead, AIConfigSettings } from './types';
+
+import { Lead, AIConfigSettings, Sale } from './types';
 
 export const MOCK_LEADS: Lead[] = [
   {
@@ -54,6 +55,63 @@ export const MOCK_LEADS: Lead[] = [
       { id: 'm1', role: 'human_agent', content: 'Sr. Roberto, o link foi enviado por SMS.', timestamp: '14:00' },
       { id: 'm2', role: 'lead', content: 'Já cliquei no link. E agora?', timestamp: '14:05' },
     ]
+  }
+];
+
+export const MOCK_SALES: Sale[] = [
+  {
+    id: 's1',
+    clientName: 'Roberto Santos',
+    cpf: '456.123.789-11',
+    product: 'Consignado INSS - Portabilidade',
+    value: 12500.00,
+    date: '2024-03-10',
+    status: 'paid',
+    paymentMethod: 'consignado_c6',
+    notes: 'Averbado com sucesso.'
+  },
+  {
+    id: 's2',
+    clientName: 'Fernanda Lima',
+    cpf: '111.222.333-44',
+    product: 'Refinanciamento C6',
+    value: 4200.50,
+    date: '2024-03-12',
+    status: 'processing',
+    paymentMethod: 'consignado_c6',
+    notes: 'Aguardando maciça.'
+  },
+  {
+    id: 's3',
+    clientName: 'João da Silva',
+    cpf: '555.666.777-88',
+    product: 'Cartão Benefício',
+    value: 1800.00,
+    date: '2024-03-14',
+    status: 'pending',
+    paymentMethod: 'credit_card',
+    notes: 'Cliente enviando documentos.'
+  },
+  {
+    id: 's4',
+    clientName: 'Ana Paula Souza',
+    cpf: '999.888.777-66',
+    product: 'Saque FGTS',
+    value: 850.00,
+    date: '2024-03-15',
+    status: 'paid',
+    paymentMethod: 'pix',
+  },
+  {
+    id: 's5',
+    clientName: 'Pedro Martins',
+    cpf: '222.333.444-55',
+    product: 'Consignado Novo',
+    value: 25000.00,
+    date: '2024-03-15',
+    status: 'cancelled',
+    paymentMethod: 'consignado_c6',
+    notes: 'Margem insuficiente.'
   }
 ];
 

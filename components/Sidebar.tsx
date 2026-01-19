@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { MessageSquareText, Landmark, Settings2, LogOut, Sun, Moon, Sparkles } from 'lucide-react';
+import { MessageSquareText, Landmark, Settings2, LogOut, Sun, Moon, Sparkles, CircleDollarSign } from 'lucide-react';
 
 interface SidebarProps {
   currentView: string;
@@ -10,7 +11,8 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, theme, toggleTheme }) => {
   const menuItems = [
-    { id: 'inbox', icon: MessageSquareText, label: 'Inbox' },
+    { id: 'inbox', icon: MessageSquareText, label: 'Atendimentos' },
+    { id: 'sales', icon: CircleDollarSign, label: 'Vendas' },
     { id: 'integrations', icon: Landmark, label: 'Integrações' },
     { id: 'ai-config', icon: Settings2, label: 'Configurar Eva' },
   ];
@@ -63,7 +65,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, onChangeView, theme, tog
           className="w-full flex items-center justify-center md:justify-start gap-3 p-3 rounded-lg text-text-muted hover:bg-surface-hover hover:text-text transition-all mb-2"
         >
           {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          <span className="font-medium hidden md:block text-sm">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+          <span className="font-medium hidden md:block text-sm">{theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>
         </button>
         
         <button className="w-full flex items-center justify-center md:justify-start gap-3 p-3 rounded-lg text-red-400 hover:bg-red-500/10 transition-all group">

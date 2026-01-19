@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Save, KeyRound, ShieldAlert, CheckCircle, Smartphone, Wifi, WifiOff, UserPlus, Users, QrCode, Server, RefreshCw, Loader2, MonitorSmartphone, Trash2, Edit3 } from 'lucide-react';
 import { EvolutionService } from '../services/evolutionService';
@@ -266,7 +267,7 @@ const Integrations: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2 md:col-span-2">
-                    <label className="text-sm font-medium text-text-muted">Base URL (API Endpoint)</label>
+                    <label className="text-sm font-medium text-text-muted">URL Base (API Endpoint)</label>
                     <input 
                         type="text" 
                         value={evoConfig.baseUrl}
@@ -277,7 +278,7 @@ const Integrations: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                    <label className="text-sm font-medium text-text-muted">Instance Name</label>
+                    <label className="text-sm font-medium text-text-muted">Nome da Instância</label>
                     <input 
                         type="text" 
                         value={evoConfig.instanceName}
@@ -287,7 +288,7 @@ const Integrations: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                    <label className="text-sm font-medium text-text-muted">Global API Key</label>
+                    <label className="text-sm font-medium text-text-muted">Chave de API Global</label>
                     <div className="relative">
                         <input 
                             type={showEvoKey ? "text" : "password"} 
@@ -535,7 +536,7 @@ const Integrations: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-               <label className="text-sm font-medium text-text-muted">Client User (Usuário)</label>
+               <label className="text-sm font-medium text-text-muted">Usuário Cliente (Client User)</label>
                <input 
                   type="text" 
                   value={c6Config.clientUser} 
@@ -545,7 +546,7 @@ const Integrations: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-               <label className="text-sm font-medium text-text-muted">Password (Senha)</label>
+               <label className="text-sm font-medium text-text-muted">Senha (Password)</label>
                <div className="relative">
                  <input 
                     type={showPassword ? "text" : "password"} 
@@ -563,7 +564,7 @@ const Integrations: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-               <label className="text-sm font-medium text-text-muted">Promoter Code (Código Promotor)</label>
+               <label className="text-sm font-medium text-text-muted">Código do Promotor (Promoter Code)</label>
                <input 
                   type="text" 
                   value={c6Config.promoterCode} 
@@ -573,7 +574,7 @@ const Integrations: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-               <label className="text-sm font-medium text-text-muted">Typist Code (Código Digitador)</label>
+               <label className="text-sm font-medium text-text-muted">Código do Digitador (Typist Code)</label>
                <input 
                   type="text" 
                   value={c6Config.typistCode} 
@@ -583,7 +584,7 @@ const Integrations: React.FC = () => {
             </div>
 
             <div className="space-y-2 md:col-span-2">
-               <label className="text-sm font-medium text-text-muted">Certified Agent CPF (CPF Agente)</label>
+               <label className="text-sm font-medium text-text-muted">CPF do Agente Certificado (Certified Agent)</label>
                <div className="flex gap-2 items-center">
                   <div className="p-3 bg-background border border-border rounded-lg">
                       <KeyRound size={18} className="text-text-muted" />

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, CheckCircle2, User, Bot, AlertCircle, 
@@ -441,7 +442,7 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
       <div className="p-4 border-b border-border bg-background">
         <h2 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
             <MessageCircle size={20} className="text-primary" />
-            Inbox
+            Atendimentos
         </h2>
         
         {/* Search Bar */}
@@ -567,7 +568,7 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
               }`}
            >
               {aiEnabled ? <Zap size={14} fill="currentColor" /> : <Pause size={14} />}
-              {aiEnabled ? 'Eva Auto-Pilot' : 'Manual Mode'}
+              {aiEnabled ? 'Piloto Automático' : 'Modo Manual'}
            </button>
            
            <div className="relative">

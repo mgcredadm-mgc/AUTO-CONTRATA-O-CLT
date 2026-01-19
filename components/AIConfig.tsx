@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Bot, Sparkles, Sliders, Save, RotateCcw } from 'lucide-react';
 import { DEFAULT_AI_CONFIG } from '../constants';
@@ -27,7 +28,7 @@ const AIConfig: React.FC = () => {
            <div className="bg-surface rounded-xl border border-border flex flex-col h-[600px] shadow-sm overflow-hidden">
               <div className="p-4 border-b border-border flex justify-between items-center bg-background/50">
                  <h2 className="font-bold text-text flex items-center gap-2 text-sm">
-                   <Sparkles size={16} className="text-yellow-500" /> SYSTEM PROMPT
+                   <Sparkles size={16} className="text-yellow-500" /> PROMPT DO SISTEMA
                  </h2>
                  <span className="text-[10px] bg-background border border-border px-2 py-1 rounded text-text-muted font-mono">Tokens: ~145</span>
               </div>

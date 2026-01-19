@@ -58,6 +58,23 @@ export interface AIConfigSettings {
   systemPrompt: string;
 }
 
+// --- SALES CONTROL TYPES ---
+
+export type SaleStatus = 'paid' | 'pending' | 'cancelled' | 'processing';
+export type PaymentMethod = 'pix' | 'credit_card' | 'boleto' | 'consignado_c6' | 'transfer';
+
+export interface Sale {
+  id: string;
+  clientName: string;
+  cpf?: string;
+  product: string;
+  value: number;
+  date: string;
+  status: SaleStatus;
+  paymentMethod: PaymentMethod;
+  notes?: string;
+}
+
 // --- C6 API TYPES (Based on PDF) ---
 
 export interface C6TokenResponse {

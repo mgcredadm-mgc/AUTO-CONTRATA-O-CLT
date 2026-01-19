@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Inbox from './components/Inbox';
 import Integrations from './components/Integrations';
 import AIConfig from './components/AIConfig';
+import SalesControl from './components/SalesControl';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState('inbox');
@@ -23,6 +25,8 @@ const App: React.FC = () => {
     switch (currentView) {
       case 'inbox':
         return <Inbox theme={theme} />;
+      case 'sales':
+        return <SalesControl />;
       case 'integrations':
         return <Integrations />;
       case 'ai-config':
