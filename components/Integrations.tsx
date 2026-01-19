@@ -5,6 +5,7 @@ import { EvolutionService } from '../services/evolutionService';
 import { C6Service } from '../services/c6Service';
 import { FactaService } from '../services/factaService';
 import { EvolutionConfig, IntegrationsConfig, WhatsappConnectionMode, WhatsAppTemplate, FactaConfig } from '../types';
+import { MOCK_TEMPLATES } from '../constants';
 
 const Integrations: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -34,11 +35,7 @@ const Integrations: React.FC = () => {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 
   // Templates Logic State
-  const [templates, setTemplates] = useState<WhatsAppTemplate[]>([
-      { id: '1', name: 'saudacao_inicial', category: 'MARKETING', language: 'pt_BR', body: 'Olá {{1}}, aqui é a Eva do CRM. Temos uma oferta para você.', status: 'APPROVED', variables: ['Nome'] },
-      { id: '2', name: 'confirmacao_pix', category: 'UTILITY', language: 'pt_BR', body: 'Seu PIX de R$ {{1}} foi confirmado com sucesso.', status: 'APPROVED', variables: ['Valor'] },
-      { id: '3', name: 'oferta_relampago', category: 'MARKETING', language: 'pt_BR', body: 'Somente hoje! Taxa de {{1}}% para portabilidade.', status: 'REJECTED', variables: ['Taxa'] }
-  ]);
+  const [templates, setTemplates] = useState<WhatsAppTemplate[]>(MOCK_TEMPLATES);
   const [showNewTemplate, setShowNewTemplate] = useState(false);
   const [newTemplate, setNewTemplate] = useState<Partial<WhatsAppTemplate>>({
       name: '', category: 'MARKETING', language: 'pt_BR', body: ''
@@ -414,9 +411,8 @@ const Integrations: React.FC = () => {
                     </button>
                 </div>
 
-                {/* TEMPLATE MANAGER SECTION - Omitted for brevity in this specific update unless required, but keeping structure for context */}
+                {/* TEMPLATE MANAGER SECTION */}
                 <div className="border-t border-border pt-8">
-                    {/* ... (Existing Template Logic) ... */}
                     <div className="flex justify-between items-center mb-6">
                         <div>
                             <h3 className="text-lg font-bold text-text flex items-center gap-2">
@@ -431,7 +427,7 @@ const Integrations: React.FC = () => {
                             <Plus size={14} /> Novo Template
                         </button>
                     </div>
-                    {/* ... (Existing Template List) ... */}
+
                     {showNewTemplate && (
                         <div className="bg-surface border border-border rounded-xl p-5 mb-6 animate-in slide-in-from-top-2">
                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -548,7 +544,7 @@ const Integrations: React.FC = () => {
               </div>
           )}
 
-          {/* MODE: WEB QR CODE - Omitted for brevity */}
+          {/* MODE: WEB QR CODE */}
           {evoConfig.mode === 'web' && (
               <div className="flex flex-col md:flex-row gap-8 animate-in fade-in slide-in-from-right-4 duration-300">
                   {/* Instructions */}
@@ -656,7 +652,7 @@ const Integrations: React.FC = () => {
       </div>
 
       {/* --- C6 BANK API --- */}
-      <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm mb-8">
+      <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
         <div className="p-6 border-b border-border bg-gradient-to-r from-surface to-background flex justify-between items-center">
            <div className="flex items-center gap-4">
              <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center font-bold text-black text-2xl shadow-lg shadow-yellow-500/20">C6</div>
@@ -684,6 +680,9 @@ const Integrations: React.FC = () => {
                             <option key={idx} value={idx}>{p.profileName || p.clientUser}</option>
                         ))}
                     </select>
+                    {/* Delete Icon overlay logic would be complex here, so handling deletion via list or edit mode is better. 
+                        Simplified: Render a separate list manager below or add a delete button next to select.
+                    */}
                 </div>
                 {activeProfileIndex !== null && (
                      <button 

@@ -1,5 +1,5 @@
 
-import { Lead, AIConfigSettings, Sale } from './types';
+import { Lead, AIConfigSettings, Sale, WhatsAppTemplate } from './types';
 
 export const MOCK_LEADS: Lead[] = [
   {
@@ -114,6 +114,13 @@ export const MOCK_SALES: Sale[] = [
     paymentMethod: 'desconto_folha',
     notes: 'Margem insuficiente confirmada pelo RH.'
   }
+];
+
+export const MOCK_TEMPLATES: WhatsAppTemplate[] = [
+    { id: '1', name: 'saudacao_inicial', category: 'MARKETING', language: 'pt_BR', body: 'Olá {{1}}, aqui é a Eva do CRM. Temos uma oferta especial de crédito consignado para você.', status: 'APPROVED', variables: ['Nome'] },
+    { id: '2', name: 'aviso_portabilidade', category: 'MARKETING', language: 'pt_BR', body: 'Oi {{1}}, vi que você possui contratos ativos com taxas altas. Que tal reduzir sua parcela?', status: 'APPROVED', variables: ['Nome'] },
+    { id: '3', name: 'confirmacao_dados', category: 'UTILITY', language: 'pt_BR', body: 'Sr(a) {{1}}, precisamos confirmar seus dados para seguir com a proposta. Pode falar agora?', status: 'APPROVED', variables: ['Nome'] },
+    { id: '4', name: 'oferta_relampago', category: 'MARKETING', language: 'pt_BR', body: 'Somente hoje! Taxa de {{1}}% para portabilidade.', status: 'REJECTED', variables: ['Taxa'] }
 ];
 
 export const DEFAULT_AI_CONFIG: AIConfigSettings = {

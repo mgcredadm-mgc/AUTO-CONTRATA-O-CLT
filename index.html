@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR" class="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +12,7 @@
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'system-ui', 'sans-serif'],
+              sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
               mono: ['Fira Code', 'monospace'],
             },
             colors: {
@@ -22,65 +23,80 @@
               text: 'var(--text)',
               'text-muted': 'var(--text-muted)',
               
-              // Evolution API Green Palette
+              // Cores do Conceito Dribbble
+              // CORRIGIDO: Primary agora é Azul para garantir contraste em botões
               primary: {
-                DEFAULT: '#10b981', // emerald-500
-                dark: '#059669', // emerald-600
-                light: '#34d399', // emerald-400
-                glow: 'rgba(16, 185, 129, 0.5)'
+                DEFAULT: '#2B5CE6', 
+                dark: '#3B82F6',
               },
-              // Eva (AI) is now the Primary Brand Color
-              ai: {
-                DEFAULT: '#10b981', 
-                bg: 'rgba(16, 185, 129, 0.1)',
-                text: '#34d399',
-              },
-              // Human Agent color (Blue/Gray for contrast)
-              human: {
-                DEFAULT: '#3b82f6', // blue-500
-                bg: 'rgba(59, 130, 246, 0.1)',
-                text: '#60a5fa',
+              accent: {
+                blue: '#2B5CE6', // Cartão Azul Royal
+                cyan: '#4796BD', // Cartão Ciano/Teal
+                yellow: '#F2D45C', // Cartão Amarelo
+                black: '#0A0A0A', // Cartão Preto
+                green: '#10b981',
               }
             },
-            animation: {
-              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            boxShadow: {
+              'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
+              'float': '0 20px 40px -10px rgba(0,0,0,0.1)',
             }
           }
         }
       }
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
       @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
 
       :root {
-        /* Light Mode (Clean Tech) */
-        --background: #ffffff;
-        --surface: #f4f4f5; 
-        --surface-hover: #e4e4e7;
-        --border: #e4e4e7;
-        --text: #18181b;
-        --text-muted: #71717a;
+        /* Light Mode (Baseado no Design) */
+        --background: #F3F5F7; 
+        --surface: rgba(255, 255, 255, 0.65);
+        --surface-hover: rgba(255, 255, 255, 0.9);
+        --border: rgba(255, 255, 255, 0.4);
+        --text: #1A1A1A;
+        --text-muted: #6B7280;
       }
 
       .dark {
-        /* Evolution API Dark Mode Style */
-        --background: #09090b; /* Deep Black */
-        --surface: #121214;    /* Slightly lighter black */
-        --surface-hover: #1e1e22;
-        --border: #27272a;     /* Zinc 800 */
-        --text: #f4f4f5;       /* Zinc 100 */
-        --text-muted: #a1a1aa; /* Zinc 400 */
+        --background: #0f1115;
+        /* Ajustado para ser mais claro que o fundo no modo dark */
+        --surface: rgba(30, 35, 45, 0.7); 
+        --surface-hover: rgba(45, 50, 60, 0.9);
+        --border: rgba(255, 255, 255, 0.1);
+        --text: #ffffff;
+        --text-muted: #9ca3af;
       }
 
       body {
         background-color: var(--background);
+        /* Mesh Gradient sutil no fundo */
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(200, 220, 255, 0.4) 0px, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(240, 255, 200, 0.4) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(240, 220, 250, 0.4) 0px, transparent 50%);
+        background-attachment: fixed;
         color: var(--text);
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         transition: background-color 0.3s ease, color 0.3s ease;
       }
 
-      /* Custom scrollbar matching dark theme */
+      .dark body {
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(30, 50, 90, 0.3) 0px, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(40, 60, 30, 0.3) 0px, transparent 50%);
+      }
+
+      /* Classes Utilitárias de Vidro (Glassmorphism) */
+      .glass {
+        background: var(--surface);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+      }
+      
+      /* Scrollbar customizada invisivel/fina */
       ::-webkit-scrollbar {
         width: 6px;
         height: 6px;
@@ -89,18 +105,8 @@
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: #27272a;
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #10b981; /* Primary Green on Hover */
-      }
-
-      /* Utilitários Visuais */
-      .glass-panel {
-        background: rgba(18, 18, 20, 0.7);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.05);
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
       }
     </style>
   <script type="importmap">

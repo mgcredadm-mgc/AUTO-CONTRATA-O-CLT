@@ -256,7 +256,7 @@ const AccessSettings: React.FC = () => {
                                 onClick={() => setEditingRole(role)}
                                 className={`p-4 rounded-xl border cursor-pointer transition-all ${
                                     editingRole?.id === role.id 
-                                    ? 'bg-primary/5 border-primary shadow-[0_0_15px_rgba(16,185,129,0.1)]' 
+                                    ? 'bg-primary/5 border-primary shadow-[0_0_15px_rgba(43,92,230,0.1)]' 
                                     : 'bg-surface border-border hover:border-primary/50'
                                 }`}
                              >

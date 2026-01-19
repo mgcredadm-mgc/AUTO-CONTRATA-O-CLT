@@ -1,7 +1,9 @@
 
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileSpreadsheet, Play, Trash2, CheckCircle2, AlertCircle, Loader2, Database, Users } from 'lucide-react';
+import { UploadCloud, FileSpreadsheet, Play, Trash2, CheckCircle2, AlertCircle, Loader2, Database, Users, MessageSquare, Smartphone } from 'lucide-react';
 import { UploadedLead } from '../types';
+import { MOCK_TEMPLATES } from '../constants';
+import { EvolutionService } from '../services/evolutionService';
 
 const CustomerUpload: React.FC = () => {
   const [dragActive, setDragActive] = useState(false);
@@ -9,6 +11,8 @@ const CustomerUpload: React.FC = () => {
   const [data, setData] = useState<UploadedLead[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [processProgress, setProcessProgress] = useState(0);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+  
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -58,7 +62,7 @@ const CustomerUpload: React.FC = () => {
                 id: `import_${index}`,
                 rowNumber: index + 1,
                 name: cols[0] || 'Desconhecido',
-                phone: cols[1] || '',
+                phone: cols[1] ? cols[1].replace(/\D/g, '') : '',
                 cpf: cols[2] || '',
                 status: 'pending'
             };
@@ -69,23 +73,45 @@ const CustomerUpload: React.FC = () => {
   };
 
   const startProcessing = async () => {
+      if (!selectedTemplateId) {
+          alert("Por favor, selecione um template aprovado para iniciar os disparos.");
+          return;
+      }
+
       setIsProcessing(true);
       setProcessProgress(0);
 
+      const template = MOCK_TEMPLATES.find(t => t.id === selectedTemplateId);
+      if (!template) return;
+
       const total = data.length;
       for (let i = 0; i < total; i++) {
-          // Simula processamento / envio de mensagem
-          await new Promise(resolve => setTimeout(resolve, 800)); // Delay simulado
+          const lead = data[i];
           
-          setData(prev => {
-              const newData = [...prev];
-              // Simula erro aleatório em 10% dos casos
-              const status = Math.random() > 0.9 ? 'error' : 'completed';
-              newData[i] = { ...newData[i], status };
-              return newData;
-          });
+          if (lead.phone) {
+              // Substituição de variáveis simples (Ex: {{1}} pelo nome)
+              const message = template.body.replace('{{1}}', lead.name);
+              
+              // Envia via Evolution API Service
+              const success = await EvolutionService.sendMessage(lead.phone, message);
+              
+              setData(prev => {
+                  const newData = [...prev];
+                  const status = success ? 'completed' : 'error';
+                  newData[i] = { ...newData[i], status };
+                  return newData;
+              });
+          } else {
+              setData(prev => {
+                  const newData = [...prev];
+                  newData[i] = { ...newData[i], status: 'error' };
+                  return newData;
+              });
+          }
           
           setProcessProgress(Math.round(((i + 1) / total) * 100));
+          // Pequeno delay para evitar bloqueio da API/Whatsapp
+          await new Promise(resolve => setTimeout(resolve, 1000));
       }
       setIsProcessing(false);
   };
@@ -98,6 +124,8 @@ const CustomerUpload: React.FC = () => {
       if(inputRef.current) inputRef.current.value = '';
   };
 
+  const selectedTemplate = MOCK_TEMPLATES.find(t => t.id === selectedTemplateId);
+
   return (
     <div className="p-6 md:p-10 h-full overflow-y-auto">
       <div className="mb-8">
@@ -108,7 +136,7 @@ const CustomerUpload: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-         {/* Área de Upload */}
+         {/* Área de Upload e Configuração */}
          <div className="lg:col-span-1 space-y-6">
              <div 
                 className={`relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center transition-all h-64 ${
@@ -155,35 +183,61 @@ const CustomerUpload: React.FC = () => {
              </div>
 
              {file && (
-                 <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
-                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-text flex items-center gap-2">
-                            <Users size={18} /> Resumo da Base
-                        </h3>
-                        {isProcessing && <span className="text-xs font-mono text-primary">{processProgress}%</span>}
-                     </div>
-                     <div className="space-y-3 text-sm">
-                         <div className="flex justify-between">
-                             <span className="text-text-muted">Total de Contatos:</span>
-                             <span className="font-bold text-text">{data.length}</span>
-                         </div>
-                         <div className="flex justify-between">
-                             <span className="text-text-muted">Processados:</span>
-                             <span className="font-bold text-text">
-                                 {data.filter(i => i.status !== 'pending').length}
-                             </span>
-                         </div>
-                         <div className="flex justify-between text-green-500">
-                             <span>Sucesso:</span>
-                             <span className="font-bold">{data.filter(i => i.status === 'completed').length}</span>
-                         </div>
-                         <div className="flex justify-between text-red-500">
-                             <span>Falhas:</span>
-                             <span className="font-bold">{data.filter(i => i.status === 'error').length}</span>
-                         </div>
+                 <div className="bg-surface border border-border rounded-xl p-5 shadow-sm space-y-5">
+                     
+                     {/* Seletor de Template */}
+                     <div>
+                         <label className="text-xs font-bold text-text-muted uppercase mb-2 block flex items-center gap-2">
+                             <MessageSquare size={14} /> Template Aprovado (HSM)
+                         </label>
+                         <select 
+                            value={selectedTemplateId}
+                            onChange={(e) => setSelectedTemplateId(e.target.value)}
+                            disabled={isProcessing}
+                            className="w-full bg-background border border-border rounded-lg p-2.5 text-sm text-text focus:border-primary outline-none"
+                         >
+                             <option value="">Selecione um modelo...</option>
+                             {MOCK_TEMPLATES.filter(t => t.status === 'APPROVED').map(t => (
+                                 <option key={t.id} value={t.id}>{t.name}</option>
+                             ))}
+                         </select>
+                         
+                         {selectedTemplate && (
+                             <div className="mt-3 p-3 bg-background border border-border rounded-lg">
+                                 <p className="text-[10px] text-text-muted mb-1 font-bold">Prévia da Mensagem:</p>
+                                 <p className="text-xs text-text italic">
+                                     "{selectedTemplate.body.replace('{{1}}', data[0]?.name || '[Nome do Cliente]')}"
+                                 </p>
+                             </div>
+                         )}
                      </div>
 
-                     <div className="mt-6 flex gap-3">
+                     <div className="h-px bg-border"></div>
+
+                     <div>
+                        <div className="flex justify-between items-center mb-2">
+                            <h3 className="font-bold text-text flex items-center gap-2 text-sm">
+                                <Users size={16} /> Status do Processo
+                            </h3>
+                            {isProcessing && <span className="text-xs font-mono text-primary">{processProgress}%</span>}
+                        </div>
+                        <div className="space-y-2 text-xs">
+                            <div className="flex justify-between">
+                                <span className="text-text-muted">Total:</span>
+                                <span className="font-bold text-text">{data.length}</span>
+                            </div>
+                            <div className="flex justify-between text-green-500">
+                                <span>Enviados:</span>
+                                <span className="font-bold">{data.filter(i => i.status === 'completed').length}</span>
+                            </div>
+                            <div className="flex justify-between text-red-500">
+                                <span>Falhas:</span>
+                                <span className="font-bold">{data.filter(i => i.status === 'error').length}</span>
+                            </div>
+                        </div>
+                     </div>
+
+                     <div className="flex gap-3 pt-2">
                          <button 
                              onClick={clearFile}
                              disabled={isProcessing}
@@ -193,11 +247,15 @@ const CustomerUpload: React.FC = () => {
                          </button>
                          <button 
                              onClick={startProcessing}
-                             disabled={isProcessing || data.length === 0}
-                             className="flex-[2] py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                             disabled={isProcessing || data.length === 0 || !selectedTemplateId}
+                             className={`flex-[2] py-2.5 rounded-lg shadow-lg transition-all flex items-center justify-center gap-2 text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed ${
+                                 !selectedTemplateId 
+                                 ? 'bg-surface text-text-muted border border-border' 
+                                 : 'bg-primary hover:bg-primary-dark text-white shadow-primary/20'
+                             }`}
                          >
                              {isProcessing ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
-                             {isProcessing ? 'Processando...' : 'Iniciar Disparos'}
+                             {isProcessing ? 'Enviando...' : 'Iniciar Disparos'}
                          </button>
                      </div>
                  </div>
@@ -236,13 +294,15 @@ const CustomerUpload: React.FC = () => {
                                  <tr key={row.id} className="hover:bg-surface-hover transition-colors">
                                      <td className="p-4 text-text-muted font-mono text-xs">{row.rowNumber}</td>
                                      <td className="p-4 font-medium text-text">{row.name}</td>
-                                     <td className="p-4 text-text-muted">{row.phone}</td>
+                                     <td className="p-4 text-text-muted flex items-center gap-1">
+                                         <Smartphone size={12}/> {row.phone}
+                                     </td>
                                      <td className="p-4 text-text-muted font-mono">{row.cpf}</td>
                                      <td className="p-4 text-right">
                                          {row.status === 'pending' && <span className="px-2 py-1 bg-surface border border-border rounded text-xs text-text-muted">Pendente</span>}
                                          {row.status === 'processing' && <span className="px-2 py-1 bg-blue-500/10 text-blue-500 border border-blue-500/20 rounded text-xs animate-pulse">Enviando...</span>}
                                          {row.status === 'completed' && <span className="px-2 py-1 bg-green-500/10 text-green-500 border border-green-500/20 rounded text-xs flex items-center gap-1 justify-end ml-auto w-fit"><CheckCircle2 size={12}/> Enviado</span>}
-                                         {row.status === 'error' && <span className="px-2 py-1 bg-red-500/10 text-red-500 border border-red-500/20 rounded text-xs flex items-center gap-1 justify-end ml-auto w-fit"><AlertCircle size={12}/> Erro</span>}
+                                         {row.status === 'error' && <span className="px-2 py-1 bg-red-500/10 text-red-500 border border-red-500/20 rounded text-xs flex items-center gap-1 justify-end ml-auto w-fit"><AlertCircle size={12}/> Falha</span>}
                                      </td>
                                  </tr>
                              ))

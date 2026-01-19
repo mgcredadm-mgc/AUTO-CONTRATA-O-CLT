@@ -405,8 +405,8 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
   };
 
   const RenderLeadList = () => (
-    <div className="flex flex-col h-full border-r border-border bg-surface w-full md:w-80 lg:w-96 flex-shrink-0 z-10">
-      <div className="p-4 border-b border-border bg-background">
+    <div className="flex flex-col h-full border-r border-border bg-surface w-full md:w-80 lg:w-96 flex-shrink-0">
+      <div className="p-4 border-b border-border bg-background/50">
         <h2 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
             <MessageCircle size={20} className="text-primary" />
             Atendimentos
@@ -792,7 +792,7 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
 
   const RenderLeadContext = () => (
     <div className="w-80 border-l border-border bg-surface h-full flex flex-col overflow-y-auto flex-shrink-0 hidden xl:flex z-10">
-      <div className="p-6 border-b border-border bg-background">
+      <div className="p-6 border-b border-border bg-background/50">
         <h3 className="font-bold text-text mb-4 flex items-center gap-2">
           <User size={18} className="text-primary" />
           Dados do Lead
@@ -902,7 +902,7 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
   );
 
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-full w-full overflow-hidden bg-white/50 backdrop-blur-sm">
       <RenderLeadList />
       <RenderChatArea />
       <RenderLeadContext />
