@@ -63,55 +63,56 @@ export const MOCK_SALES: Sale[] = [
     id: 's1',
     clientName: 'Roberto Santos',
     cpf: '456.123.789-11',
-    product: 'Consignado INSS - Portabilidade',
+    product: 'Consignado CLT (Novo)',
     value: 12500.00,
     date: '2024-03-10',
     status: 'paid',
-    paymentMethod: 'consignado_c6',
-    notes: 'Averbado com sucesso.'
+    paymentMethod: 'desconto_folha',
+    notes: 'Averbado com sucesso pelo RH.'
   },
   {
     id: 's2',
     clientName: 'Fernanda Lima',
     cpf: '111.222.333-44',
-    product: 'Refinanciamento C6',
+    product: 'Refinanciamento CLT',
     value: 4200.50,
     date: '2024-03-12',
     status: 'processing',
-    paymentMethod: 'consignado_c6',
-    notes: 'Aguardando maciça.'
+    paymentMethod: 'desconto_folha',
+    notes: 'Aguardando retorno da empresa.'
   },
   {
     id: 's3',
     clientName: 'João da Silva',
     cpf: '555.666.777-88',
-    product: 'Cartão Benefício',
-    value: 1800.00,
+    product: 'Portabilidade CLT',
+    value: 18000.00,
     date: '2024-03-14',
     status: 'pending',
-    paymentMethod: 'credit_card',
-    notes: 'Cliente enviando documentos.'
+    paymentMethod: 'desconto_folha',
+    notes: 'Solicitação de saldo enviada.'
   },
   {
     id: 's4',
     clientName: 'Ana Paula Souza',
     cpf: '999.888.777-66',
-    product: 'Saque FGTS',
-    value: 850.00,
+    product: 'Consignado CLT (Novo)',
+    value: 5850.00,
     date: '2024-03-15',
     status: 'paid',
-    paymentMethod: 'pix',
+    paymentMethod: 'desconto_folha',
+    notes: 'Crédito liberado na conta.'
   },
   {
     id: 's5',
     clientName: 'Pedro Martins',
     cpf: '222.333.444-55',
-    product: 'Consignado Novo',
+    product: 'Consignado CLT (Novo)',
     value: 25000.00,
     date: '2024-03-15',
     status: 'cancelled',
-    paymentMethod: 'consignado_c6',
-    notes: 'Margem insuficiente.'
+    paymentMethod: 'desconto_folha',
+    notes: 'Margem insuficiente confirmada pelo RH.'
   }
 ];
 

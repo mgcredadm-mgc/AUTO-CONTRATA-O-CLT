@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   DollarSign, Search, Filter, Plus, Calendar, 
   CheckCircle, AlertCircle, Clock, XCircle, 
-  MoreVertical, FileText, Wallet, ArrowUpRight 
+  MoreVertical, FileText, Wallet, ArrowUpRight, Building2 
 } from 'lucide-react';
 import { Sale, SaleStatus, PaymentMethod } from '../types';
 import { MOCK_SALES } from '../constants';
@@ -18,10 +18,10 @@ const SalesControl: React.FC = () => {
   const [newSale, setNewSale] = useState<Partial<Sale>>({
     clientName: '',
     cpf: '',
-    product: '',
+    product: 'Consignado CLT (Novo)',
     value: 0,
     status: 'pending',
-    paymentMethod: 'consignado_c6',
+    paymentMethod: 'desconto_folha',
     date: new Date().toISOString().split('T')[0]
   });
 
@@ -68,7 +68,7 @@ const SalesControl: React.FC = () => {
       value: Number(newSale.value),
       date: newSale.date || new Date().toISOString().split('T')[0],
       status: newSale.status as SaleStatus || 'pending',
-      paymentMethod: newSale.paymentMethod as PaymentMethod || 'consignado_c6',
+      paymentMethod: 'desconto_folha',
       notes: newSale.notes
     };
 
@@ -77,10 +77,10 @@ const SalesControl: React.FC = () => {
     setNewSale({
         clientName: '',
         cpf: '',
-        product: '',
+        product: 'Consignado CLT (Novo)',
         value: 0,
         status: 'pending',
-        paymentMethod: 'consignado_c6',
+        paymentMethod: 'desconto_folha',
         date: new Date().toISOString().split('T')[0]
     });
   };
@@ -89,14 +89,14 @@ const SalesControl: React.FC = () => {
     <div className="p-6 md:p-10 h-full overflow-y-auto">
       <div className="mb-8 flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-bold text-text mb-2 tracking-tight">Controle de Vendas</h1>
-          <p className="text-text-muted">Gerencie contratos, pagamentos e status financeiro.</p>
+          <h1 className="text-3xl font-bold text-text mb-2 tracking-tight">Vendas CLT</h1>
+          <p className="text-text-muted">Gerencie contratos de Crédito Consignado Privado.</p>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
           className="bg-primary hover:bg-primary-dark text-white px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 shadow-lg shadow-primary/20 transition-all transform active:scale-95"
         >
-          <Plus size={18} /> Nova Venda
+          <Plus size={18} /> Nova Proposta CLT
         </button>
       </div>
 
@@ -108,20 +108,20 @@ const SalesControl: React.FC = () => {
                <Wallet size={24} />
              </div>
              <span className="text-xs font-bold text-green-500 flex items-center gap-1 bg-green-500/5 px-2 py-1 rounded-full">
-               <ArrowUpRight size={12}/> Total Realizado
+               <ArrowUpRight size={12}/> Total Liberado
              </span>
            </div>
-           <p className="text-text-muted text-sm font-medium">Receita Confirmada (Pago)</p>
+           <p className="text-text-muted text-sm font-medium">Contratos Pagos (CLT)</p>
            <h3 className="text-3xl font-bold text-text mt-1">{formatCurrency(totalValue)}</h3>
         </div>
 
         <div className="bg-surface border border-border rounded-xl p-6 shadow-sm">
            <div className="flex justify-between items-start mb-2">
              <div className="p-3 rounded-lg bg-yellow-500/10 text-yellow-500">
-               <Clock size={24} />
+               <Building2 size={24} />
              </div>
              <span className="text-xs font-bold text-text-muted bg-surface-hover px-2 py-1 rounded-full border border-border">
-               Em Esteira
+               Em Análise RH
              </span>
            </div>
            <p className="text-text-muted text-sm font-medium">Previsão (Pendente/Proc.)</p>
@@ -134,7 +134,7 @@ const SalesControl: React.FC = () => {
                <FileText size={24} />
              </div>
            </div>
-           <p className="text-text-muted text-sm font-medium">Contratos Totais</p>
+           <p className="text-text-muted text-sm font-medium">Propostas Totais</p>
            <h3 className="text-3xl font-bold text-text mt-1">{totalSalesCount}</h3>
         </div>
       </div>
@@ -145,7 +145,7 @@ const SalesControl: React.FC = () => {
             <Search className="absolute left-3 top-3 text-text-muted w-4 h-4" />
             <input 
               type="text" 
-              placeholder="Buscar cliente, produto ou CPF..."
+              placeholder="Buscar colaborador, empresa ou CPF..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-background border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-text focus:border-primary focus:ring-1 focus:ring-primary outline-none"
@@ -174,10 +174,10 @@ const SalesControl: React.FC = () => {
             <table className="w-full text-left border-collapse">
                 <thead>
                     <tr className="border-b border-border bg-background/50 text-xs text-text-muted uppercase tracking-wider">
-                        <th className="p-4 font-bold">Cliente</th>
-                        <th className="p-4 font-bold">Produto/Serviço</th>
+                        <th className="p-4 font-bold">Colaborador / Cliente</th>
+                        <th className="p-4 font-bold">Modalidade CLT</th>
                         <th className="p-4 font-bold">Data</th>
-                        <th className="p-4 font-bold">Valor</th>
+                        <th className="p-4 font-bold">Valor Líquido</th>
                         <th className="p-4 font-bold">Status</th>
                         <th className="p-4 font-bold">Ações</th>
                     </tr>
@@ -190,7 +190,8 @@ const SalesControl: React.FC = () => {
                                 <div className="text-xs text-text-muted">{sale.cpf || 'CPF N/D'}</div>
                             </td>
                             <td className="p-4">
-                                <span className="text-sm text-text bg-background border border-border px-2 py-1 rounded">
+                                <span className="text-sm text-text bg-background border border-border px-2 py-1 rounded flex items-center gap-2 w-fit">
+                                    <Building2 size={12} className="text-text-muted"/>
                                     {sale.product}
                                 </span>
                             </td>
@@ -213,7 +214,7 @@ const SalesControl: React.FC = () => {
                     {filteredSales.length === 0 && (
                         <tr>
                             <td colSpan={6} className="p-8 text-center text-text-muted">
-                                Nenhum registro encontrado.
+                                Nenhum contrato CLT encontrado.
                             </td>
                         </tr>
                     )}
@@ -227,7 +228,7 @@ const SalesControl: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-surface border border-border rounded-2xl w-full max-w-lg shadow-2xl animate-in zoom-in duration-200">
                 <div className="p-6 border-b border-border flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-text">Nova Venda</h2>
+                    <h2 className="text-xl font-bold text-text">Nova Proposta CLT</h2>
                     <button onClick={() => setShowAddModal(false)} className="text-text-muted hover:text-red-500 transition-colors">
                         <XCircle size={24} />
                     </button>
@@ -235,7 +236,7 @@ const SalesControl: React.FC = () => {
                 
                 <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                     <div>
-                        <label className="block text-sm font-bold text-text mb-1">Nome do Cliente *</label>
+                        <label className="block text-sm font-bold text-text mb-1">Nome do Colaborador *</label>
                         <input 
                             type="text" 
                             className="w-full bg-background border border-border rounded-lg p-2.5 text-text focus:border-primary outline-none"
@@ -254,7 +255,7 @@ const SalesControl: React.FC = () => {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-text mb-1">Data</label>
+                            <label className="block text-sm font-bold text-text mb-1">Data da Proposta</label>
                             <input 
                                 type="date" 
                                 className="w-full bg-background border border-border rounded-lg p-2.5 text-text focus:border-primary outline-none"
@@ -264,17 +265,19 @@ const SalesControl: React.FC = () => {
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-text mb-1">Produto / Serviço *</label>
-                        <input 
-                            type="text" 
+                        <label className="block text-sm font-bold text-text mb-1">Modalidade CLT *</label>
+                        <select 
                             className="w-full bg-background border border-border rounded-lg p-2.5 text-text focus:border-primary outline-none"
                             value={newSale.product}
                             onChange={(e) => setNewSale({...newSale, product: e.target.value})}
-                            placeholder="Ex: Consignado INSS"
-                        />
+                        >
+                            <option value="Consignado CLT (Novo)">Consignado CLT (Novo)</option>
+                            <option value="Portabilidade CLT">Portabilidade de Crédito CLT</option>
+                            <option value="Refinanciamento CLT">Refinanciamento CLT</option>
+                        </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-text mb-1">Valor (R$) *</label>
+                        <label className="block text-sm font-bold text-text mb-1">Valor Líquido (R$) *</label>
                         <input 
                             type="number" 
                             className="w-full bg-background border border-border rounded-lg p-2.5 text-text focus:border-primary outline-none"
@@ -290,32 +293,29 @@ const SalesControl: React.FC = () => {
                                 value={newSale.status}
                                 onChange={(e) => setNewSale({...newSale, status: e.target.value as SaleStatus})}
                             >
-                                <option value="pending">Pendente</option>
-                                <option value="paid">Pago</option>
-                                <option value="processing">Processando</option>
-                                <option value="cancelled">Cancelado</option>
+                                <option value="pending">Pendente (RH)</option>
+                                <option value="processing">Em Análise</option>
+                                <option value="paid">Pago / Averbado</option>
+                                <option value="cancelled">Cancelado / Recusado</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-text mb-1">Método</label>
-                            <select 
-                                className="w-full bg-background border border-border rounded-lg p-2.5 text-text focus:border-primary outline-none"
-                                value={newSale.paymentMethod}
-                                onChange={(e) => setNewSale({...newSale, paymentMethod: e.target.value as PaymentMethod})}
-                            >
-                                <option value="consignado_c6">Consignado C6</option>
-                                <option value="pix">PIX</option>
-                                <option value="credit_card">Cartão de Crédito</option>
-                                <option value="boleto">Boleto</option>
-                            </select>
+                            <label className="block text-sm font-bold text-text mb-1">Forma de Desconto</label>
+                            <input 
+                                type="text"
+                                className="w-full bg-surface border border-border rounded-lg p-2.5 text-text-muted cursor-not-allowed"
+                                value="Desconto em Folha"
+                                disabled
+                            />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-text mb-1">Notas</label>
+                        <label className="block text-sm font-bold text-text mb-1">Observações Internas</label>
                         <textarea 
                             className="w-full bg-background border border-border rounded-lg p-2.5 text-text focus:border-primary outline-none h-20 resize-none"
                             value={newSale.notes}
                             onChange={(e) => setNewSale({...newSale, notes: e.target.value})}
+                            placeholder="Ex: Aguardando margem do RH..."
                         />
                     </div>
                 </div>
@@ -331,7 +331,7 @@ const SalesControl: React.FC = () => {
                         onClick={handleAddSale}
                         className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all font-bold"
                     >
-                        Salvar Venda
+                        Salvar Proposta
                     </button>
                 </div>
             </div>

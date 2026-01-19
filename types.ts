@@ -61,7 +61,8 @@ export interface AIConfigSettings {
 // --- SALES CONTROL TYPES ---
 
 export type SaleStatus = 'paid' | 'pending' | 'cancelled' | 'processing';
-export type PaymentMethod = 'pix' | 'credit_card' | 'boleto' | 'consignado_c6' | 'transfer';
+// Restrito para CLT
+export type PaymentMethod = 'desconto_folha';
 
 export interface Sale {
   id: string;
