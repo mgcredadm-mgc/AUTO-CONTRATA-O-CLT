@@ -36,6 +36,24 @@ export const c6Tools = [
     },
   },
   {
+    name: "simular_credito_trabalhador_facta",
+    description: "Realiza uma simulação na Facta Financeira (Produto Crédito do Trabalhador/CLT). Ideal para antecipação ou empréstimo com desconto em folha.",
+    parameters: {
+      type: Type.OBJECT,
+      properties: {
+        cpf: {
+          type: Type.STRING,
+          description: "CPF do trabalhador.",
+        },
+        rendaMensal: {
+          type: Type.NUMBER,
+          description: "Renda mensal aproximada do trabalhador para cálculo de limite.",
+        }
+      },
+      required: ["cpf", "rendaMensal"],
+    },
+  },
+  {
     name: "gerar_link_formalizacao",
     description: "Gera o link de formalização digital (biometria facial) para o cliente assinar a proposta.",
     parameters: {
@@ -51,7 +69,7 @@ export const c6Tools = [
   },
   {
     name: "consultar_status_proposta",
-    description: "Verifica o status atual de uma proposta no C6 (ex: Aguardando Assinatura, Integrada, Paga).",
+    description: "Verifica o status atual de uma proposta no C6 ou Facta.",
     parameters: {
       type: Type.OBJECT,
       properties: {

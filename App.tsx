@@ -5,6 +5,8 @@ import Inbox from './components/Inbox';
 import Integrations from './components/Integrations';
 import AIConfig from './components/AIConfig';
 import SalesControl from './components/SalesControl';
+import CustomerUpload from './components/CustomerUpload';
+import AccessSettings from './components/AccessSettings';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState('inbox');
@@ -25,10 +27,14 @@ const App: React.FC = () => {
     switch (currentView) {
       case 'inbox':
         return <Inbox theme={theme} />;
+      case 'customer-base':
+        return <CustomerUpload />;
       case 'sales':
         return <SalesControl />;
       case 'integrations':
         return <Integrations />;
+      case 'settings':
+        return <AccessSettings />;
       case 'ai-config':
         return <AIConfig />;
       default:

@@ -1,14 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { Eye, EyeOff, Save, KeyRound, ShieldAlert, CheckCircle, Smartphone, Wifi, WifiOff, UserPlus, Users, QrCode, Server, RefreshCw, Loader2, MonitorSmartphone, Trash2, Edit3 } from 'lucide-react';
+import { Eye, EyeOff, Save, KeyRound, ShieldAlert, CheckCircle, Smartphone, Wifi, WifiOff, UserPlus, Users, QrCode, Server, RefreshCw, Loader2, MonitorSmartphone, Trash2, Edit3, MessageSquare, Plus, Check, X, Send, Briefcase } from 'lucide-react';
 import { EvolutionService } from '../services/evolutionService';
 import { C6Service } from '../services/c6Service';
-import { EvolutionConfig, IntegrationsConfig, WhatsappConnectionMode } from '../types';
+import { FactaService } from '../services/factaService';
+import { EvolutionConfig, IntegrationsConfig, WhatsappConnectionMode, WhatsAppTemplate, FactaConfig } from '../types';
 
 const Integrations: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showFactaPassword, setShowFactaPassword] = useState(false);
+  
   const [isLoadingC6, setIsLoadingC6] = useState(false);
   const [c6TokenStatus, setC6TokenStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const [isLoadingFacta, setIsLoadingFacta] = useState(false);
+  const [factaTokenStatus, setFactaTokenStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   // WhatsApp Config State
   const [evoConfig, setEvoConfig] = useState<EvolutionConfig>({
@@ -27,6 +33,18 @@ const Integrations: React.FC = () => {
   const [qrStatus, setQrStatus] = useState<'idle' | 'generating' | 'ready' | 'scanned' | 'success'>('idle');
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
 
+  // Templates Logic State
+  const [templates, setTemplates] = useState<WhatsAppTemplate[]>([
+      { id: '1', name: 'saudacao_inicial', category: 'MARKETING', language: 'pt_BR', body: 'Olá {{1}}, aqui é a Eva do CRM. Temos uma oferta para você.', status: 'APPROVED', variables: ['Nome'] },
+      { id: '2', name: 'confirmacao_pix', category: 'UTILITY', language: 'pt_BR', body: 'Seu PIX de R$ {{1}} foi confirmado com sucesso.', status: 'APPROVED', variables: ['Valor'] },
+      { id: '3', name: 'oferta_relampago', category: 'MARKETING', language: 'pt_BR', body: 'Somente hoje! Taxa de {{1}}% para portabilidade.', status: 'REJECTED', variables: ['Taxa'] }
+  ]);
+  const [showNewTemplate, setShowNewTemplate] = useState(false);
+  const [newTemplate, setNewTemplate] = useState<Partial<WhatsAppTemplate>>({
+      name: '', category: 'MARKETING', language: 'pt_BR', body: ''
+  });
+  const [testNumber, setTestNumber] = useState('');
+
   // C6 Config State
   const [c6Config, setC6Config] = useState<IntegrationsConfig>({
     profileName: '',
@@ -35,6 +53,12 @@ const Integrations: React.FC = () => {
     promoterCode: '000224',
     typistCode: '305337',
     certifiedAgentCpf: '40913785873'
+  });
+
+  // Facta Config State
+  const [factaConfig, setFactaConfig] = useState<FactaConfig>({
+      user: '',
+      password: ''
   });
 
   // Saved Profiles State
@@ -68,6 +92,12 @@ const Integrations: React.FC = () => {
       setC6Config(storedC6);
     }
 
+    // Load Facta Config
+    const storedFacta = FactaService.getConfig();
+    if (storedFacta) {
+        setFactaConfig(storedFacta);
+    }
+
     // Load Saved Profiles
     const profiles = localStorage.getItem('c6_profiles');
     if (profiles) {
@@ -99,7 +129,7 @@ const Integrations: React.FC = () => {
         localStorage.setItem('c6_profiles', JSON.stringify(updatedProfiles));
         alert(`Credenciais ativas e Perfil "${c6Config.profileName}" atualizados!`);
     } else {
-        alert('Credenciais ativas salvas!');
+        alert('Credenciais C6 salvas!');
     }
   };
 
@@ -144,6 +174,23 @@ const Integrations: React.FC = () => {
           }
       }
   }
+
+  // --- Funções Facta ---
+
+  const handleTestTokenFacta = async () => {
+      setIsLoadingFacta(true);
+      setFactaTokenStatus('idle');
+      FactaService.saveConfig(factaConfig);
+      const token = await FactaService.authenticate();
+      setIsLoadingFacta(false);
+      setFactaTokenStatus(token ? 'success' : 'error');
+  };
+
+  const handleSaveFactaConfig = () => {
+      FactaService.saveConfig(factaConfig);
+      setFactaTokenStatus('idle');
+      alert('Credenciais Facta salvas com sucesso!');
+  };
 
   // --- Funções WhatsApp ---
 
@@ -197,6 +244,52 @@ const Integrations: React.FC = () => {
       const newConfig = { ...evoConfig, webConnected: false };
       setEvoConfig(newConfig);
       localStorage.setItem('evolution_config', JSON.stringify(newConfig));
+  };
+
+  // --- Funções Templates ---
+
+  const handleAddTemplate = () => {
+      if (!newTemplate.name || !newTemplate.body) return;
+      
+      // Extrair variáveis {{1}}, {{2}} simples
+      const matches = newTemplate.body.match(/\{\{\d+\}\}/g);
+      const variables = matches ? matches : [];
+
+      const template: WhatsAppTemplate = {
+          id: Date.now().toString(),
+          name: newTemplate.name.toLowerCase().replace(/\s/g, '_'),
+          category: newTemplate.category as any,
+          language: newTemplate.language || 'pt_BR',
+          body: newTemplate.body,
+          status: 'PENDING', // Sempre começa pendente para aprovação da Meta
+          variables
+      };
+
+      setTemplates([...templates, template]);
+      setNewTemplate({ name: '', category: 'MARKETING', language: 'pt_BR', body: '' });
+      setShowNewTemplate(false);
+
+      // Simula aprovação da Meta após 3 segundos
+      setTimeout(() => {
+          setTemplates(prev => prev.map(t => 
+              t.id === template.id ? { ...t, status: Math.random() > 0.2 ? 'APPROVED' : 'REJECTED' } : t
+          ));
+      }, 3000);
+  };
+
+  const handleTestTemplate = (templateName: string) => {
+      if (!testNumber) {
+          alert("Digite um número para teste.");
+          return;
+      }
+      alert(`Teste do template '${templateName}' enviado para ${testNumber}. Verifique o status na API.`);
+      // Aqui chamaria EvolutionService.sendMessage
+  };
+
+  const handleDeleteTemplate = (id: string) => {
+    if(window.confirm("Tem certeza que deseja remover este template?")) {
+        setTemplates(prev => prev.filter(t => t.id !== id));
+    }
   };
 
   return (
@@ -306,7 +399,7 @@ const Integrations: React.FC = () => {
                     </div>
                 </div>
                 
-                <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                <div className="flex justify-end gap-3 pt-4 border-t border-border mb-8">
                     <button 
                     onClick={() => checkEvoConnection()}
                     className="px-4 py-2 bg-surface hover:bg-surface-hover border border-border text-text-muted rounded-lg text-sm font-medium transition-colors"
@@ -320,10 +413,142 @@ const Integrations: React.FC = () => {
                     Salvar Configuração API
                     </button>
                 </div>
+
+                {/* TEMPLATE MANAGER SECTION - Omitted for brevity in this specific update unless required, but keeping structure for context */}
+                <div className="border-t border-border pt-8">
+                    {/* ... (Existing Template Logic) ... */}
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 className="text-lg font-bold text-text flex items-center gap-2">
+                                <MessageSquare className="text-primary" /> Meus Templates (HSM)
+                            </h3>
+                            <p className="text-xs text-text-muted">Gerencie modelos de mensagens para iniciar conversas (regra 24h).</p>
+                        </div>
+                        <button 
+                            onClick={() => setShowNewTemplate(!showNewTemplate)}
+                            className="text-xs font-bold flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-lg border border-primary/20 hover:bg-primary/20 transition-all"
+                        >
+                            <Plus size={14} /> Novo Template
+                        </button>
+                    </div>
+                    {/* ... (Existing Template List) ... */}
+                    {showNewTemplate && (
+                        <div className="bg-surface border border-border rounded-xl p-5 mb-6 animate-in slide-in-from-top-2">
+                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                 <div>
+                                     <label className="text-xs font-bold text-text-muted block mb-1">Nome do Modelo</label>
+                                     <input 
+                                        type="text" 
+                                        placeholder="ex: saudacao_promocao"
+                                        className="w-full bg-background border border-border rounded p-2 text-sm text-text"
+                                        value={newTemplate.name}
+                                        onChange={(e) => setNewTemplate({...newTemplate, name: e.target.value})}
+                                     />
+                                 </div>
+                                 <div>
+                                     <label className="text-xs font-bold text-text-muted block mb-1">Categoria</label>
+                                     <select 
+                                        className="w-full bg-background border border-border rounded p-2 text-sm text-text"
+                                        value={newTemplate.category}
+                                        onChange={(e) => setNewTemplate({...newTemplate, category: e.target.value as any})}
+                                     >
+                                         <option value="MARKETING">Marketing</option>
+                                         <option value="UTILITY">Utilidade</option>
+                                         <option value="AUTHENTICATION">Autenticação</option>
+                                     </select>
+                                 </div>
+                                 <div>
+                                     <label className="text-xs font-bold text-text-muted block mb-1">Idioma</label>
+                                     <input 
+                                        type="text" 
+                                        value="Português (BR)" 
+                                        disabled 
+                                        className="w-full bg-background/50 border border-border rounded p-2 text-sm text-text-muted"
+                                     />
+                                 </div>
+                             </div>
+                             <div className="mb-4">
+                                 <label className="text-xs font-bold text-text-muted block mb-1">Corpo da Mensagem (use {'{{1}}'} para variáveis)</label>
+                                 <textarea 
+                                    className="w-full bg-background border border-border rounded p-3 text-sm text-text h-24 resize-none"
+                                    value={newTemplate.body}
+                                    onChange={(e) => setNewTemplate({...newTemplate, body: e.target.value})}
+                                 />
+                             </div>
+                             <div className="flex justify-end gap-2">
+                                 <button onClick={() => setShowNewTemplate(false)} className="px-3 py-1.5 text-xs font-medium text-text-muted hover:text-text">Cancelar</button>
+                                 <button onClick={handleAddTemplate} className="px-3 py-1.5 bg-primary text-white text-xs font-bold rounded shadow-sm hover:bg-primary-dark">Solicitar Aprovação</button>
+                             </div>
+                        </div>
+                    )}
+
+                    <div className="space-y-3">
+                        {templates.map(t => (
+                            <div key={t.id} className="bg-background border border-border rounded-lg p-4 flex flex-col md:flex-row gap-4 items-start md:items-center">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <h4 className="font-bold text-text text-sm">{t.name}</h4>
+                                        <span className="text-[10px] bg-surface-hover px-1.5 py-0.5 rounded text-text-muted border border-border">{t.category}</span>
+                                    </div>
+                                    <p className="text-xs text-text-muted line-clamp-1 italic">"{t.body}"</p>
+                                </div>
+                                
+                                <div className="flex items-center gap-4">
+                                    <div className="flex flex-col items-end">
+                                        {t.status === 'APPROVED' && (
+                                            <span className="flex items-center gap-1 text-[10px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
+                                                <CheckCircle size={10} /> Aprovado (Meta)
+                                            </span>
+                                        )}
+                                        {t.status === 'PENDING' && (
+                                            <span className="flex items-center gap-1 text-[10px] font-bold text-yellow-500 bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">
+                                                <Loader2 size={10} className="animate-spin" /> Em Análise
+                                            </span>
+                                        )}
+                                        {t.status === 'REJECTED' && (
+                                            <span className="flex items-center gap-1 text-[10px] font-bold text-red-500 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">
+                                                <X size={10} /> Rejeitado
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        {t.status === 'APPROVED' && (
+                                            <div className="flex items-center gap-2 bg-surface p-1 rounded-lg border border-border">
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="55119999..."
+                                                    className="w-24 bg-transparent text-[10px] outline-none text-text pl-1"
+                                                    value={testNumber}
+                                                    onChange={(e) => setTestNumber(e.target.value)}
+                                                />
+                                                <button 
+                                                    onClick={() => handleTestTemplate(t.name)}
+                                                    className="p-1 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
+                                                    title="Enviar Teste"
+                                                >
+                                                    <Send size={12} />
+                                                </button>
+                                            </div>
+                                        )}
+                                        <button 
+                                            onClick={() => handleDeleteTemplate(t.id)}
+                                            className="p-2 text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                                            title="Excluir Template"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
               </div>
           )}
 
-          {/* MODE: WEB QR CODE */}
+          {/* MODE: WEB QR CODE - Omitted for brevity */}
           {evoConfig.mode === 'web' && (
               <div className="flex flex-col md:flex-row gap-8 animate-in fade-in slide-in-from-right-4 duration-300">
                   {/* Instructions */}
@@ -431,7 +656,7 @@ const Integrations: React.FC = () => {
       </div>
 
       {/* --- C6 BANK API --- */}
-      <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
+      <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm mb-8">
         <div className="p-6 border-b border-border bg-gradient-to-r from-surface to-background flex justify-between items-center">
            <div className="flex items-center gap-4">
              <div className="w-12 h-12 bg-yellow-400 rounded-xl flex items-center justify-center font-bold text-black text-2xl shadow-lg shadow-yellow-500/20">C6</div>
@@ -459,9 +684,6 @@ const Integrations: React.FC = () => {
                             <option key={idx} value={idx}>{p.profileName || p.clientUser}</option>
                         ))}
                     </select>
-                    {/* Delete Icon overlay logic would be complex here, so handling deletion via list or edit mode is better. 
-                        Simplified: Render a separate list manager below or add a delete button next to select.
-                    */}
                 </div>
                 {activeProfileIndex !== null && (
                      <button 
@@ -627,6 +849,82 @@ const Integrations: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* --- FACTA FINANCEIRA API --- */}
+      <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-sm">
+        <div className="p-6 border-b border-border bg-gradient-to-r from-surface to-background flex justify-between items-center">
+           <div className="flex items-center gap-4">
+             <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center font-bold text-white text-xl shadow-lg shadow-orange-500/20">
+                <Briefcase size={20} />
+             </div>
+             <div>
+               <h2 className="text-lg font-bold text-text">Facta Financeira</h2>
+               <p className="text-xs text-text-muted flex items-center gap-1">
+                 Integração para Produto Crédito do Trabalhador
+               </p>
+             </div>
+           </div>
+        </div>
+
+        <div className="p-6 md:p-8 space-y-6 bg-surface/50">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-text-muted">Usuário (Login)</label>
+                    <input 
+                        type="text" 
+                        value={factaConfig.user}
+                        onChange={(e) => setFactaConfig({...factaConfig, user: e.target.value})}
+                        className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all" 
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-text-muted">Senha</label>
+                    <div className="relative">
+                        <input 
+                            type={showFactaPassword ? "text" : "password"} 
+                            value={factaConfig.password}
+                            onChange={(e) => setFactaConfig({...factaConfig, password: e.target.value})}
+                            className="w-full bg-background border border-border rounded-lg px-4 py-3 text-text focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition-all pr-10" 
+                        />
+                        <button 
+                            onClick={() => setShowFactaPassword(!showFactaPassword)}
+                            className="absolute right-3 top-3.5 text-text-muted hover:text-text"
+                        >
+                            {showFactaPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="border-t border-border pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                    <button 
+                        onClick={handleTestTokenFacta}
+                        disabled={isLoadingFacta}
+                        className="px-4 py-2 bg-surface hover:bg-surface-hover border border-border rounded-lg text-text text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+                    >
+                        {isLoadingFacta ? <span className="w-4 h-4 border-2 border-text-muted border-t-transparent rounded-full animate-spin"></span> : <ShieldAlert size={16} />}
+                        Testar Token
+                    </button>
+                    
+                    {factaTokenStatus === 'success' && (
+                        <span className="text-xs text-green-500 font-bold flex items-center gap-1 animate-in fade-in slide-in-from-left-2">
+                            <CheckCircle size={14} /> Conectado
+                        </span>
+                    )}
+                </div>
+
+                <button 
+                    onClick={handleSaveFactaConfig}
+                    className="w-full md:w-auto px-6 py-2.5 bg-orange-500 text-white hover:bg-orange-600 rounded-lg font-bold shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 transition-all transform active:scale-95"
+                >
+                    <Save size={18} /> Salvar Credenciais
+                </button>
+            </div>
+        </div>
+      </div>
+
     </div>
   );
 };

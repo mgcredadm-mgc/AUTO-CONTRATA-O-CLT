@@ -121,39 +121,75 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
   const handleTransferLead = () => {
       const targetAgent = window.prompt("Digite o nome do vendedor ou fila para transferência:", "Mesa de Crédito 02");
       if (targetAgent) {
-          addMessageToState({
+          const transferMessage: MessageWithAttachment = {
               id: Date.now().toString(),
               role: 'human_agent',
               isInternal: true,
               content: `🔄 Lead transferido para: ${targetAgent}`,
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          });
+          };
+
+          // Atualiza estado: Adiciona mensagem e muda status
+          setLeads(prev => prev.map(l => {
+              if (l.id === selectedLeadId) {
+                  return {
+                      ...l,
+                      status: 'human_intervention',
+                      messages: [...l.messages, transferMessage],
+                      lastMessage: `Transferido para ${targetAgent}`,
+                      lastActive: 'Agora'
+                  };
+              }
+              return l;
+          }));
+
           setAiEnabled(false);
-          updateLeadStatus(selectedLeadId, 'human_intervention');
           setShowDropdown(false);
-          alert(`Lead transferido com sucesso para ${targetAgent}.`);
       }
   };
 
   const handleArchiveLead = () => {
       if(window.confirm("Deseja arquivar este atendimento? O lead será movido para 'Fechado'.")){
-          updateLeadStatus(selectedLeadId, 'closed');
+          // Lógica para selecionar o próximo lead disponível após arquivar o atual
+          const currentIndex = filteredLeads.findIndex(l => l.id === selectedLeadId);
+          // Tenta pegar o próximo, ou o anterior se for o último
+          const nextLead = filteredLeads[currentIndex + 1] || filteredLeads[currentIndex - 1];
+
+          // Atualiza o status do lead atual para fechado
+          setLeads(prev => prev.map(l => l.id === selectedLeadId ? { ...l, status: 'closed' } : l));
+          
+          // Se houver outro lead, seleciona ele
+          if (nextLead) {
+              setSelectedLeadId(nextLead.id);
+          }
+          
           setShowDropdown(false);
-          // Opcional: Selecionar o próximo lead automaticamente
       }
   };
 
   const handleClearContext = () => {
       if(window.confirm("Isso apagará a memória de curto prazo da Eva para este cliente. Continuar?")){
-           addMessageToState({
+           const resetMessage: MessageWithAttachment = {
               id: Date.now().toString(),
               role: 'ai_agent',
               isInternal: true,
-              content: `🧹 Contexto da IA limpo manualmente pelo operador.`,
+              content: `🧹 Contexto da IA limpo manualmente pelo operador. Memória reiniciada.`,
               timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          });
+          };
+
+          // Limpa as mensagens do lead
+          setLeads(prev => prev.map(l => {
+              if (l.id === selectedLeadId) {
+                  return {
+                      ...l,
+                      messages: [resetMessage], // Mantém apenas a mensagem de reset
+                      lastMessage: 'Contexto reiniciado'
+                  };
+              }
+              return l;
+          }));
+
           setShowDropdown(false);
-          // Lógica real envolveria limpar o histórico enviado para a API do Gemini
       }
   };
 
@@ -192,16 +228,6 @@ const Inbox: React.FC<InboxProps> = ({ theme }) => {
         setIsAiTyping(false);
         setToolExecutionStatus(null);
     }
-
-    /* 
-    // CÓDIGO ORIGINAL COMENTADO PARA REFERÊNCIA FUTURA
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      // ... lógica original ...
-    } catch (error) {
-      // ...
-    }
-    */
   };
 
   const addMessageToState = (newMessage: MessageWithAttachment) => {

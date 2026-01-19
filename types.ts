@@ -29,6 +29,25 @@ export interface Lead {
   messages: Message[];
 }
 
+export interface UploadedLead {
+    id: string;
+    name: string;
+    phone: string;
+    cpf?: string;
+    status: 'pending' | 'processing' | 'completed' | 'error';
+    rowNumber: number;
+}
+
+export interface WhatsAppTemplate {
+    id: string;
+    name: string;
+    category: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION';
+    language: string;
+    body: string;
+    status: 'APPROVED' | 'PENDING' | 'REJECTED';
+    variables: string[]; // ex: {{1}}, {{2}}
+}
+
 export interface IntegrationsConfig {
   profileName?: string; // Nome para identificar o perfil salvo
   clientUser: string;
@@ -36,6 +55,11 @@ export interface IntegrationsConfig {
   promoterCode: string;
   typistCode: string;
   certifiedAgentCpf: string;
+}
+
+export interface FactaConfig {
+  user: string;
+  password?: string;
 }
 
 export type WhatsappConnectionMode = 'api' | 'web';
@@ -74,6 +98,34 @@ export interface Sale {
   status: SaleStatus;
   paymentMethod: PaymentMethod;
   notes?: string;
+}
+
+// --- ACCESS CONTROL TYPES ---
+
+export type AccessModule = 'inbox' | 'sales' | 'customers' | 'integrations' | 'ai_config' | 'settings';
+export type AccessLevel = 'none' | 'read' | 'write' | 'admin';
+
+export interface Permission {
+    module: AccessModule;
+    level: AccessLevel;
+}
+
+export interface SystemRole {
+    id: string;
+    name: string;
+    description: string;
+    isSystemDefault?: boolean; // Se true, não pode ser deletado
+    permissions: Permission[];
+}
+
+export interface SystemUser {
+    id: string;
+    name: string;
+    email: string;
+    roleId: string;
+    status: 'active' | 'inactive';
+    lastLogin: string;
+    avatarUrl?: string;
 }
 
 // --- C6 API TYPES (Based on PDF) ---
