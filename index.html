@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eva - Intelligent CRM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              mono: ['Fira Code', 'monospace'],
+            },
+            colors: {
+              background: 'var(--background)',
+              surface: 'var(--surface)',
+              'surface-hover': 'var(--surface-hover)',
+              border: 'var(--border)',
+              text: 'var(--text)',
+              'text-muted': 'var(--text-muted)',
+              
+              // Evolution API Green Palette
+              primary: {
+                DEFAULT: '#10b981', // emerald-500
+                dark: '#059669', // emerald-600
+                light: '#34d399', // emerald-400
+                glow: 'rgba(16, 185, 129, 0.5)'
+              },
+              // Eva (AI) is now the Primary Brand Color
+              ai: {
+                DEFAULT: '#10b981', 
+                bg: 'rgba(16, 185, 129, 0.1)',
+                text: '#34d399',
+              },
+              // Human Agent color (Blue/Gray for contrast)
+              human: {
+                DEFAULT: '#3b82f6', // blue-500
+                bg: 'rgba(59, 130, 246, 0.1)',
+                text: '#60a5fa',
+              }
+            },
+            animation: {
+              'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+      :root {
+        /* Light Mode (Clean Tech) */
+        --background: #ffffff;
+        --surface: #f4f4f5; 
+        --surface-hover: #e4e4e7;
+        --border: #e4e4e7;
+        --text: #18181b;
+        --text-muted: #71717a;
+      }
+
+      .dark {
+        /* Evolution API Dark Mode Style */
+        --background: #09090b; /* Deep Black */
+        --surface: #121214;    /* Slightly lighter black */
+        --surface-hover: #1e1e22;
+        --border: #27272a;     /* Zinc 800 */
+        --text: #f4f4f5;       /* Zinc 100 */
+        --text-muted: #a1a1aa; /* Zinc 400 */
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      /* Custom scrollbar matching dark theme */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #27272a;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #10b981; /* Primary Green on Hover */
+      }
+
+      /* Utilitários Visuais */
+      .glass-panel {
+        background: rgba(18, 18, 20, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.05);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
+    "recharts": "https://esm.sh/recharts@2.12.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

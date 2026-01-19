@@ -1,0 +1,7 @@
+{
+  "name": "Eva - Intelligent CRM",
+  "description": "Eva is your advanced AI assistant for credit management and customer relations, powered by Evolution API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
